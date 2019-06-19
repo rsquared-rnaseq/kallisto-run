@@ -20,10 +20,14 @@ for fq1, fq2 in fastqs:
     outputs.append(config["output_dir"] + "/{tumor}/{outdir}".format(
         tumor=basename[:4],
         outdir=basename[:-len("_1.fastq.gz")]))
+output_fns = [odir + "/abundance.tsv" for odir in outputs]
+
+rule all:
+    input: output_fns
 
 rule run_kallisto:
     input: fqs=fastqs, index=config['index_file']
-    output: [odir + "/abundance.tsv" for odir in outputs]
+    output: output_fns
     run:
         for (fq1, fq2), odir in zip(fastqs, outputs):
             kallisto_cmd = "kallisto quant -i {index} -o {od} -b 100 {f1} {f2}".format(
