@@ -29,9 +29,10 @@ rule all:
 rule run_kallisto:
     input: fqs=fastqs, index=config['index_file']
     output: output_fns
+    threads: config["threads_per_proc"]
     run:
         for (fq1, fq2), odir in zip(fastqs, outputs):
-            kallisto_cmd = "kallisto quant -i {index} -o {od} -b 100 -t {threads} {f1} {f2} &".format(
+            kallisto_cmd = "kallisto quant -i {index} -o {od} -b 100 -t {threads} {f1} {f2}".format(
                 index=input.index,
                 od=odir,
                 threads=config["threads_per_proc"],
