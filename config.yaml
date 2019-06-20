@@ -2,4 +2,4 @@ data_dir: "/Volumes/Robinson-sb"
 output_dir: "/Volumes/Robinson-sb/output"
 index_file: "/Volumes/Robinson-sb/restifoan/GRCh38.idx"
 
-threads_per_proc: 4
+threads_per_proc: 8
