@@ -7,11 +7,12 @@ import os
 fastqs_pair1 = glob.glob(config["data_dir"] + "/**/*_1.fastq.gz", recursive=True)
 fastqs_pair2 = glob.glob(config["data_dir"] + "/**/*_2.fastq.gz", recursive=True)
 if len(fastqs_pair1) != len(fastqs_pair2):
-    print("Error: This pipeline only supports paired-end reads")
+    print("Error: This pipeline only supports paired-end reads. fq1 len={0}, fq2 len={1}".format(len(fastqs_pair1), len(fastqs_pair2)))
     quit()
 
 fastqs = list(zip(sorted(fastqs_pair1), sorted(fastqs_pair2)))
 outputs = []
+print(fastqs)
 
 for fq1, fq2 in fastqs:
     basename = os.path.basename(fq1)
