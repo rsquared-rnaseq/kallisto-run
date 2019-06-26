@@ -31,8 +31,3 @@ rule process_fastq:
         odir=config["output_dir"] + "/{samp}/{tumors}"
     shell:
         "kallisto quant -i {config[index_file]} -o {params.odir} -t {config[threads_per_proc]} -b 100 {input.fq1} {input.fq2}"
-<<<<<<< HEAD
-=======
-
-# TODO: Add a sanity check here
->>>>>>> 60387e06e879b05b9e14a11bea90df08a6b17a38
