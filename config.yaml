@@ -1,5 +1,5 @@
-data_dir: "/data/Robinson-SB/16-C-0027"
-output_dir: "/data/Robinson-SB/16-C-0027/kallisto_quant"
+data_dir: "/data/Robinson-SB/{trial}"
+output_dir: "/data/Robinson-SB/{trial}/kallisto_quant"
 index_file: "/data/Robinson-SB/restifoan/GRCh38.idx"
 
 threads_per_proc: 8
