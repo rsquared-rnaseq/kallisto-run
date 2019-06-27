@@ -1,7 +1,7 @@
 import pandas as pd
 import glob
 import os
-from datetime import datetime
+import datetime as dt
 
 # TODO: Make this whole file part of our snakemake pipeline. This current solution hardcodes the study, which is fine
 # TODO: for now and the forseeable future.
@@ -17,14 +17,15 @@ trial_dirs = ["/data/Robinson-SB/16-C-0027", "/data/Robinson-SB/14-C-0022"]
 metadata_path = "/data/Robinson-SB/metadata-trials16and14.tsv"
 
 df = pd.DataFrame(columns=columns)
+cur_idx = 0
 for trial_dir in trial_dirs:
     # response: CR, PR
     # non-response: NR, SD, PD
     this_trial = os.path.basename(trial_dir)
-    print("Processing trial ", this_trial)
+    print("Processing trial", this_trial)
 
     # Samples taken after this cutoff used RNA access while samples taken before use poly-A
-    method_cutoff = datetime(2017, 6, 15)
+    method_cutoff = dt.datetime(2017, 6, 15)
 
     quant_dir = os.path.join(trial_dir, "kallisto_quant")
 
@@ -34,7 +35,6 @@ for trial_dir in trial_dirs:
 
     abundances = glob.glob(quant_dir + "/**/abundance.h5", recursive=True)
 
-    cur_idx = 0
     for ab in abundances:
         ab_name = os.path.basename(os.path.dirname(ab))
 
@@ -70,13 +70,16 @@ for trial_dir in trial_dirs:
                 start = date_str.index(month)
                 parsed = "_".join(date_str[start:].split("_")[:3])
 
-                dt_obj = datetime.strptime(parsed, "%B_%d_%Y")
+                # TODO: If parsing with this format string fails, try another one instead of just skipping the sample
+                dt_obj = dt.datetime.strptime(parsed, "%B_%d_%Y")
             except ValueError:
                 pass
 
         if dt_obj is None:
-            print("Warning: Couldn't identify date for sample %s, skipping" % ab)
-            continue  # skip sample
+            print("Warning: Couldn't identify date for sample %s, assuming method is poly-A" % ab)
+
+            # by giving a date 1 day before the cut off, this sample's method will be poly-A
+            dt_obj = method_cutoff - dt.timedelta(days=1)
 
         method = "rna_access" if dt_obj > method_cutoff else "polya"
         df.loc[cur_idx] = [tumor_num, this_trial, ab_name, ab, method, did_respond, sex, age]
