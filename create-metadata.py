@@ -1,6 +1,7 @@
 import pandas as pd
 import glob
 import os
+import h5py
 import datetime as dt
 
 # TODO: Make this whole file part of our snakemake pipeline. This current solution hardcodes the study, which is fine
@@ -10,7 +11,6 @@ months = ["january", "february", "march", "april", "may", "june",
           "july", "august", "september", "october", "november", "december"]
 columns = ["tumor_num", "trial", "sample", "path", "method", "response", "sex", "age"]
 
-# TODO: Test with multiple study dirs
 trial_dirs = ["/data/Robinson-SB/16-C-0027", "/data/Robinson-SB/14-C-0022"]
 
 # Output path for the metadata file
@@ -40,6 +40,13 @@ for trial_dir in trial_dirs:
 
         # Get metadata for this tumor
         tumor_metadata = resp_data[resp_data.tumor == int(ab_name[:4])]
+
+        # Sanity check
+        try:
+            h5py.File(ab, "r")  # open hdf5 file for reading. If it opens without an OSError, we know it's valid
+        except OSError:
+            print("Warning: Cannot read HDF5 file %s. Skipping" % ab)
+            continue
 
         if len(tumor_metadata.columns) != 4:
             print("Warning: Sample %s has incomplete metadata, ncol=%d. Skipping" % (ab, len(tumor_metadata.columns)))
