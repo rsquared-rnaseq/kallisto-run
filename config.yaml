@@ -1,5 +1,6 @@
 data_dir: "/data/Robinson-SB/{trial}"
 output_dir: "/data/Robinson-SB/{trial}/kallisto_quant"
-index_file: "/data/Robinson-SB/restifoan/GRCh38.idx"
+ref_transcriptome_url: "ftp://ftp.ensembl.org/pub/release-97/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz"
+base_dir: "/data/Robinson-SB"
 
 threads_per_proc: 8

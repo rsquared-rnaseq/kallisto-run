@@ -34,7 +34,6 @@ for trial_dir in trial_dirs:
     resp_data = pd.read_csv(resp_data_f, delim_whitespace=True)
 
     abundances = glob.glob(quant_dir + "/**/abundance.h5", recursive=True)
-
     for ab in abundances:
         ab_name = os.path.basename(os.path.dirname(ab))
 

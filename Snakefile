@@ -10,6 +10,19 @@ TUMORS = TUMORS1+TUMORS2
 rule all:
     input:
         expand(config["output_dir"] + "/{samp}/{tumors}/abundance.tsv", zip, samp=SAMPLES, tumors=TUMORS, trial=TRIALS)
+rule dl_ref_transcriptome:
+    output:
+        ref_tscriptome=config["base_dir"] + "/ref_transcriptome.fq.gz"
+    shell:
+        "wget {config[ref_transcriptome_url]} -O {output.ref_tscriptome}"
+
+rule create_kallisto_index:
+    input:
+        ref_tscriptome=config["base_dir"] + "/ref_transcriptome.fq.gz"
+    output:
+        index_file=config["base_dir"] + "/GRCh38.idx"
+    shell:
+        "kallisto index -i {output.index_file} {input.ref_tscriptome}"
 
 rule move_fastq_files:
     input:
@@ -24,10 +37,11 @@ rule move_fastq_files:
 rule process_fastq:
     input:
         fq1=config["data_dir"] + "/{samp}/Raw_fastq/{tumors}_1.fastq.gz",
-        fq2=config["data_dir"] + "/{samp}/Raw_fastq/{tumors}_2.fastq.gz"
+        fq2=config["data_dir"] + "/{samp}/Raw_fastq/{tumors}_2.fastq.gz",
+        index_file=config["base_dir"] + "/GRCh38.idx"
     output:
         ofile=config["output_dir"] + "/{samp}/{tumors}/abundance.tsv"
     params:
         odir=config["output_dir"] + "/{samp}/{tumors}"
     shell:
-        "kallisto quant -i {config[index_file]} -o {params.odir} -t {config[threads_per_proc]} -b 100 {input.fq1} {input.fq2}"
+        "kallisto quant -i {input.index_file} -o {params.odir} -t {config[threads_per_proc]} -b 100 {input.fq1} {input.fq2}"
