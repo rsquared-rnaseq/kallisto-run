@@ -1,0 +1,9 @@
+name: kallisto-run
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python >= 3.6.0
+  - snakemake >= 5.3.0
+  - pandas
+  - h5py
